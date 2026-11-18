@@ -7,7 +7,8 @@ const widget = {
   mappings: {
     instances: {
       endpoint: "instances",
-      params: ["recursion", "project", "all-projects"],
+      params: ["recursion"],
+      optionalParams: ["project", "all-projects"],
       validate: ["metadata"],
     },
     resources: {

@@ -11,7 +11,8 @@ describe("incus widget config", () => {
 
   it("maps the instances and resources endpoints", () => {
     expect(widget.mappings.instances.endpoint).toBe("instances");
-    expect(widget.mappings.instances.params).toEqual(["recursion", "project", "all-projects"]);
+    expect(widget.mappings.instances.params).toEqual(["recursion"]);
+    expect(widget.mappings.instances.optionalParams).toEqual(["project", "all-projects"]);
     expect(widget.mappings.resources.endpoint).toBe("resources");
     expect(widget.mappings.resources.optionalParams).toEqual(["target"]);
   });
