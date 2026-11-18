@@ -1,0 +1,18 @@
+import { describe, expect, it } from "vitest";
+
+import { expectWidgetConfigShape } from "test-utils/widget-config";
+
+import widget from "./widget";
+
+describe("incus widget config", () => {
+  it("exports a valid widget config", () => {
+    expectWidgetConfigShape(widget);
+  });
+
+  it("maps the instances and resources endpoints", () => {
+    expect(widget.mappings.instances.endpoint).toBe("instances");
+    expect(widget.mappings.instances.params).toEqual(["recursion", "project", "all-projects"]);
+    expect(widget.mappings.resources.endpoint).toBe("resources");
+    expect(widget.mappings.resources.optionalParams).toEqual(["target"]);
+  });
+});

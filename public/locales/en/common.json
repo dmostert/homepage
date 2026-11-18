@@ -760,6 +760,12 @@
         "videos": "Videos",
         "storage": "Storage"
     },
+    "incus": {
+        "containers": "Containers",
+        "vms": "VMs",
+        "instances": "Instances",
+        "cpu_load": "CPU Load"
+    },
     "uptimekuma": {
         "up": "Sites Up",
         "down": "Sites Down",
