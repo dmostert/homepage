@@ -272,6 +272,28 @@ describe("pages/api/services/proxy", () => {
     expect(res.body.endpoint).toBe("list?limit=10&q=test");
   });
 
+  it("omits optional params that are not provided", async () => {
+    getServiceWidget.mockResolvedValue({ type: "queryparams" });
+    handlerFn.handler.mockImplementation(async (req, res) => res.status(200).json({ endpoint: req.query.endpoint }));
+
+    const req = {
+      method: "GET",
+      query: {
+        group: "g",
+        service: "s",
+        index: "0",
+        endpoint: "list",
+        query: JSON.stringify({ limit: 10 }),
+      },
+    };
+    const res = createMockRes();
+
+    await servicesProxy(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.endpoint).toBe("list?limit=10");
+  });
+
   it("passes mapping headers via req.extraHeaders and uses mapping.proxyHandler when provided", async () => {
     getServiceWidget.mockResolvedValue({ type: "endpointproxy" });
     handlerFn.handler.mockImplementation(async (req, res) =>
