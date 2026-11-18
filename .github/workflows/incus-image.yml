@@ -1,0 +1,83 @@
+name: Publish Incus image
+
+on:
+  push:
+    branches:
+      - feat/incus-widget
+    paths:
+      - "src/widgets/incus/**"
+      - "src/widgets/widgets.js"
+      - "src/widgets/components.js"
+      - "public/locales/**"
+      - "docs/widgets/services/incus.md"
+      - "docs/widgets/services/index.md"
+      - "mkdocs.yml"
+      - ".github/workflows/incus-image.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Build and publish ghcr.io image
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          version: 10
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v6
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build app
+        run: pnpm run build
+
+      - name: Log in to GHCR
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - name: Build and push image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:incus
+            ghcr.io/${{ github.repository }}:incus-${{ github.sha }}
+          build-args: |
+            CI=true
+          platforms: linux/amd64
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Make package public
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE: ${{ github.event.repository.name }}
+        run: |
+          # GHCR packages linked to a repository are private by default. Try to
+          # make the package public so it can be pulled without a token. If this
+          # fails, the package can be made public from its GitHub package settings.
+          gh api --method PATCH "/user/packages/container/${PACKAGE}" -f visibility=public
