@@ -391,6 +391,11 @@ export function cleanServiceGroups(groups) {
           referrerPolicy,
           src,
 
+          // incus
+          allProjects,
+          member,
+          project,
+
           // jellystat
           days,
 
@@ -698,6 +703,11 @@ export function cleanServiceGroups(groups) {
         }
         if (type === "hdhomerun") {
           if (tuner !== undefined) widget.tuner = tuner;
+        }
+        if (type === "incus") {
+          if (project) widget.project = project;
+          if (member) widget.member = member;
+          if (allProjects !== undefined) widget.allProjects = !!JSON.parse(allProjects);
         }
         if (type === "healthchecks") {
           if (uuid !== undefined) widget.uuid = uuid;

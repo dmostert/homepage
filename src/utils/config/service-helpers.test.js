@@ -385,6 +385,7 @@ describe("utils/config/service-helpers", () => {
               { type: "crowdsec", limit24h: "true" },
               { type: "docker", server: "docker-local", container: "c1" },
               { type: "unifi", site: "Home" },
+              { type: "incus", project: "default", member: "n1", allProjects: "true" },
               { type: "proxmox", node: "pve" },
               { type: "proxmoxbackupserver", datastore: "ds" },
               { type: "komodo", showSummary: "true", showStacks: "false" },
@@ -465,6 +466,9 @@ describe("utils/config/service-helpers", () => {
     expect(widgets.find((w) => w.type === "crowdsec")).toEqual(expect.objectContaining({ limit24h: true }));
     expect(widgets.find((w) => w.type === "docker")).toEqual(
       expect.objectContaining({ server: "docker-local", container: "c1" }),
+    );
+    expect(widgets.find((w) => w.type === "incus")).toEqual(
+      expect.objectContaining({ project: "default", member: "n1", allProjects: true }),
     );
     expect(widgets.find((w) => w.type === "komodo")).toEqual(
       expect.objectContaining({ showSummary: true, showStacks: false }),

@@ -6,6 +6,7 @@ on:
       - feat/incus-widget
     paths:
       - "src/widgets/incus/**"
+      - "src/utils/config/service-helpers.js"
       - "src/widgets/widgets.js"
       - "src/widgets/components.js"
       - "public/locales/**"
